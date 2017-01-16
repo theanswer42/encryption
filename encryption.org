@@ -1,0 +1,126 @@
+* Main requirements: 
+- Non interactive after initial setup
+- Its ok for decryption to need password
+
+
+** Option 1, gpg, symmetric
+https://www.nas.nasa.gov/hecc/support/kb/using-gpg-to-encrypt-your-data_242.html
+Summary: 
+- use --cipher-algo AES256
+- don't use --armor - what does this do? creates "ascii armored output", 
+rather than binary data. 
+- For data that can be compressed, use --compress-algo zlib 
+
+ASCII armor is a binary-to-textual encoding converter. ASCII armor is a 
+feature of a type of encryption called pretty good privacy (PGP). 
+ASCII armor involves encasing encrypted messaging in ASCII so that they 
+can be sent in a standard messaging format such as email.
+
+https://github.com/SixArm/gpg-encrypt/blob/master/gpg-encrypt
+Using gpg: 
+
+gpg --symmetric \
+    --cipher-algo aes256 \
+    --digest-algo sha256 \
+    --cert-digest-algo sha256 \
+    --compress-algo none -z 0 \
+    --s2k-mode 3 \
+    --s2k-digest-algo sha512 \
+    --s2k-count 65011712 \
+    --force-mdc \
+    --quiet --no-greeting \
+"$@"
+
+About the options:
+To get our settings, we use these gpg options:
+ 
+    --symmetric                   Encrypt with symmetric cipher only This command asks for a passphrase.
+    --cipher-algo aes256          Use AES256 as the cipher algorithm
+    --digest-algo sha256          Use SHA256 as the digest algorithm.
+    --cert-digest-algo sha256     Use SHA256 as the message digest algorithm used when signing a key.
+    --compress-algo none -z 0     Do not compress the file.
+    --s2k-mode 3                  Use passphrase mangling iteration mode.
+    --s2k-digest-algo sha256      Use SHA256 as the passphrase iteration algorithm.
+    --s2k-count 65011712          Use the maximum number of passphrase iterations.
+    --force-mdc                   Use modification detection code.
+    --quiet                       Try to be as quiet as possible.
+    --no-greeting                 Suppress the initial copyright message but do not enter batch mode.
+
+There's a rather long discussion about this here: 
+https://news.ycombinator.com/item?id=13382734
+
+Some takeaways: 
+*** Diceware
+diceware.com - http://world.std.com/~reinhold/diceware.html
+
+Its interesting.. Here's how to use it:
+
+Suppose you want a six word passphrase, as we recommend for most users. You will need 6 times 5 or 30 dice rolls. Let's say they come out as:
+
+ 1, 6, 6, 6, 5, 1, 5, 6, 5, 3, 5, 6, 3, 2, 2, 3, 5, 6, 
+ 1, 6, 6, 5, 2, 2, 4, 6, 4, 3, 2, and 6. 
+
+Write down the results on a scrap of paper in groups of five rolls:
+
+ 1 6 6 6 5 
+ 1 5 6 5 3 
+ 5 6 3 2 2 
+ 3 5 6 1 6
+ 6 5 2 2 4 
+ 6 4 3 2 6
+
+You then look up each group of five rolls in the Diceware word list by finding the number in the list and writing down the word next to the number:
+
+ 1 6 6 6 5 cleft
+ 1 5 6 5 3 cam
+ 5 6 3 2 2 synod
+ 3 5 6 1 6 lacy
+ 6 5 2 2 4 yr
+ 6 4 3 2 6 wok
+
+Your passphrase would then be:
+
+ cleft cam synod lacy yr wok
+
+
+*** Xkcd
+of course, there's one
+http://xkcd.com/936/
+
+*** symmetric encryption in batch mode
+Can be used by passing the passphrase on the command line: 
+gpg --yes --batch --passphrase=[Enter your passphrase here] -c filename.txt
+
+
+
+** Use asymmetric encryption?
+https://tools.ietf.org/html/rfc4880#section-2.1
+
+This explains how asymmetric encryption works. Basically, for each file: 
+1. Generate a new key
+2. Use this key for symmetric encryption of the file
+3. Encrypt this key using recipient's public key
+4. Transmit the encrypted key, followed by the file.
+
+So note that here, you end up with two things (I believe I did something similar at Slice.
+
+some more resources
+http://serverfault.com/questions/751552/encrypted-offsite-backup-using-gpg-with-private-key-never-on-backup-server
+
+http://www.somacon.com/p107.php
+
+
+
+* Key takeaways
+- Not going to use compression
+- From the top section, this is the only option I'm going to enforce:
+  --cipher-algo aes256
+- Use asymmetric encryption
+- Introduce a tool to generate a passphrase
+
+So, I'll have these scripts: 
+1. encrypt.sh
+2. decrypt.sh
+3. generate-passphrase.sh
+4. setup_encryption.sh
+
