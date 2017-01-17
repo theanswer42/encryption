@@ -16,9 +16,20 @@
 # 4. Look up each five digit number in the Diceware list and find the word next to it. For example, 21124 means your next passphrase word would be "clip" (see the excerpt from the list, above).
 # 5. When you are done, the words that you have found are your new passphrase. Memorize them and then either destroy the scrap of paper or keep it in a really safe place. That's all there is to it!
 
+# For extra security without adding another word, insert one special character or digit chosen at random into your passphrase. Here is how to do this securely: Roll one die to choose a word in your passphrase, roll again to choose a letter in that word. Roll a third and fourth time to pick the added character from the following table:
+
+#  Third Roll
+        
+#     1 2 3 4 5 6
+# F 1 ~ ! # $ % ^
+# o 2 & * ( ) - =
+# u 3 + [ ] \ { }
+# r 4 : ; " ' < >
+# t 5 ? / 0 1 2 3
+# h 6 4 5 6 7 8 9
 
 WORDLIST_NAME="beale.wordlist.asc"
-
+SPECIAL_TABLE =  [%w(~ ! # $ % ^), %w(& * ( ) - =), %w(+ [ ] \ { }), %w(: ; " ' < >), %w(? / 0 1 2 3), %w(4 5 6 7 8 9)]
 class PhraseGenerator
   attr_reader :wordlist
   def initialize
@@ -35,15 +46,34 @@ class PhraseGenerator
     
   end
 
-  def get_word
-    roll = (1..5).collect {|i| Random.rand(5) + 1 }.join("")
-    wordlist[roll]
+  def roll(count)
+    roll = (1..count).collect {|i| Random.rand(5) + 1 }
   end
   
-  def get_passphrase(words=6)
-    (1..words).collect {|i| get_word }.join(" ")
+  def get_word
+    wordlist[roll(5).join("")]
+  end
+  
+  def get_passphrase(options={})
+    count = options[:count] || 6
+    words = (1..count).collect {|i| get_word }
+    if options[:special]
+      special_roll = nil
+      while true
+        special_roll = roll(4)
+        if special_roll[0] <= words.length &&
+           special_roll[1] <= words[special_roll[0]-1].length
+          break
+        end
+      end
+      words[special_roll[0]-1][special_roll[1]-1] = SPECIAL_TABLE[special_roll[3]-1][special_roll[2]-1]
+    end
+    words.join(" ")
   end
 end
 
-p = PhraseGenerator.new()
-puts p.get_passphrase
+p = PhraseGenerator.new
+options = {special: true}
+count = ARGV[0].to_i
+options[:count] = count if count > 0
+puts p.get_passphrase(options)
