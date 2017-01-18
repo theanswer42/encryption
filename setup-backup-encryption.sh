@@ -24,7 +24,8 @@ set -o pipefail
 # personal-digest-preferences SHA256
 # cert-digest-algo SHA256
 # default-preference-list SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed
-# personal-cipher-preferences AES TWOFISH CAMELLIA256 3DES
+# personal-cipher-preferences AES256 TWOFISH CAMELLIA256 3DES
+# s2k-digest-algo SHA256
 
 # 2. generate the key
 #  gpg --full-gen-key
@@ -58,3 +59,16 @@ set -o pipefail
 # * encrypt/decrypt
 # * on a machine with no keys, import public key and be able to encrypt. test decrypt on a machine with keys.
 # * on a machine with no keys, import all keys (including the private subkeys), test decrypt.
+
+# To read:
+# http://security.stackexchange.com/questions/31594/what-is-a-good-general-purpose-gnupg-key-setup
+# 
+
+# gpg -er Key --s2k-cipher-algo AES256 --s2k-digest-algo SHA512 --cert-digest-algo SHA512 File
+# To encrypt a file, use:
+#	gpg -r NAME --output OUTFILE.gpg --encrypt INFILE
+
+# lets try the default encryption...
+# With the cipher algo preferences set above, no need to specify cipher algo again. just encrypt
+# will work. so:
+# gpg -r "Alexandria File Backup" --output ${output-filename} --encrypt ${filename}
