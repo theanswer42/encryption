@@ -11,11 +11,10 @@ set -o pipefail
 #
 # Encryption options added in config:
 # --cipher-algo AES256
-# TODO: The user-id to encrypt for should come from config
-recipient_key_name="Alexandria File Backup"
+
+. ~/.config/alexandria/backup/encryption
 
 filename=$1
-
 
 if [ ! -f "$filename" ]
 then

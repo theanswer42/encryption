@@ -15,11 +15,9 @@ set -o pipefail
 # To decrypt, the host must have access to the backup key
 # ("Alexandria File Backup")
 #
-# TODO: The user-id to decrypt for should come from config
-recipient_key_name="Alexandria File Backup"
+. ~/.config/alexandria/backup/encryption
 
 encrypted_filename=$1
-
 
 if ! echo "$encrypted_filename" | grep "\.gpg$" > /dev/null
 then
@@ -40,4 +38,4 @@ then
     echo "File '$filename' exists. Cannot decrypt."
     exit 1
 fi
-gpg -r "$recipient_key_name" --output "$filename" --decrypt "$encrypted_filename"
+gpg -q -r "$recipient_key_name" --output "$filename" --decrypt "$encrypted_filename"
