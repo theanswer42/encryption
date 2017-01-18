@@ -3,17 +3,21 @@
 ### gpg configuration
 Recommended configuration for gpg (Add to ~/.gnupg/gpg.conf)
 
- personal-digest-preferences SHA256
- cert-digest-algo SHA256
- default-preference-list SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2  ZIP Uncompressed
- personal-cipher-preferences AES256 TWOFISH CAMELLIA256 3DES
- s2k-digest-algo SHA256
+> personal-digest-preferences SHA256
+
+> cert-digest-algo SHA256
+
+> default-preference-list SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2  ZIP Uncompressed
+
+> personal-cipher-preferences AES256 TWOFISH CAMELLIA256 3DES
+
+> s2k-digest-algo SHA256
 
 ### Create a new keypair
 Backup encryption will need a gpg keypair - this needs to happen before any 
 encryption happens. To generate a new keypair:
 
- gpg --full-gen-key
+> gpg --full-gen-key
  
 Set: 
 - Name: Alexandria File Backup
@@ -29,7 +33,7 @@ TODO
 ## Setup
 Simply run:
 
- ./setup-backup-encryption.sh
+> ./setup-backup-encryption.sh
  
 This saves the key name in ~/.config/alexandria/backup/encryption
 
@@ -37,15 +41,15 @@ This saves the key name in ~/.config/alexandria/backup/encryption
 
 Encrypt: 
 
- ./encrypt-backup.sh <filename>
+> ./encrypt-backup.sh filename
  
-Encrypts a file; output saved as <filename>.gpg
+Encrypts a file; output saved as filename.gpg
 
 Decrypt:
 
- ./decrypt-backup.sh <filename>.gpg
+> ./decrypt-backup.sh filename.gpg
  
-Decrypts <filename>.gpg into <filename>
+Decrypts filename.gpg into filename
 
 # Resources
 
