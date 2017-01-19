@@ -79,4 +79,35 @@ According to the debian wiki about subkeys, all I have to do now is delete the p
 Even after doing that though, the key shows up in list-secret-keys. Maybe the agent has to reload or
 something like that??
 
+useful settings for symmetric encryption: 
+https://github.com/SixArm/gpg-encrypt/blob/master/gpg-encrypt
+Using gpg: 
+
+gpg --symmetric \
+    --cipher-algo aes256 \
+    --digest-algo sha256 \
+    --cert-digest-algo sha256 \
+    --compress-algo none -z 0 \
+    --s2k-mode 3 \
+    --s2k-digest-algo sha512 \
+    --s2k-count 65011712 \
+    --force-mdc \
+    --quiet --no-greeting \
+"$@"
+
+About the options:
+To get our settings, we use these gpg options:
+ 
+    --symmetric                   Encrypt with symmetric cipher only This command asks for a passphrase.
+    --cipher-algo aes256          Use AES256 as the cipher algorithm
+    --digest-algo sha256          Use SHA256 as the digest algorithm.
+    --cert-digest-algo sha256     Use SHA256 as the message digest algorithm used when signing a key.
+    --compress-algo none -z 0     Do not compress the file.
+    --s2k-mode 3                  Use passphrase mangling iteration mode.
+    --s2k-digest-algo sha256      Use SHA256 as the passphrase iteration algorithm.
+    --s2k-count 65011712          Use the maximum number of passphrase iterations.
+    --force-mdc                   Use modification detection code.
+    --quiet                       Try to be as quiet as possible.
+    --no-greeting                 Suppress the initial copyright message but do not enter batch mode.
+
 

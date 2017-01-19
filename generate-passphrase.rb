@@ -1,5 +1,6 @@
 #!/usr/bin/ruby
-
+#
+# http://xkcd.com/936/
 # This will generate a new passphrase based on the alternative Diceware word
 # list by Alan Beale. The list is here:
 # http://world.std.com/%7Ereinhold/beale.wordlist.asc
@@ -8,7 +9,6 @@
 # http://world.std.com/~reinhold/diceware.html
 #
 # Copied from here:
-
 
 # 1. Download the complete Diceware list or the alternative Beale list and save it on your computer. Print it out if you like. Then return to this page.
 # 2. Decide how many words you want in your passphrase. A five word passphrase provides a level of security much higher than the simple passwords most people use. We recommend a minimum of six words for use with GPG, wireless security and file encryption programs. A seven, eight or nine word pass phrase is recommended for high value uses such as whole disk encryption, BitCoin, and the like. For more information, see the Diceware FAQ.
